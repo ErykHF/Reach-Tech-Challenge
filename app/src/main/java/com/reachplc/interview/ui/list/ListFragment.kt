@@ -1,17 +1,25 @@
 package com.reachplc.interview.ui.list
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.net.wifi.WifiManager
+import android.os.Build
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.provider.Settings
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.reachplc.interview.R
 import com.reachplc.interview.adapters.RecyclerViewAdapter
-import com.reachplc.interview.data.remote.ProductsResponse
 import com.reachplc.interview.databinding.FragmentListBinding
+import com.reachplc.interview.networkutils.ConnectionLiveData
 
 
 class ListFragment : Fragment(R.layout.fragment_list) {
@@ -19,15 +27,24 @@ class ListFragment : Fragment(R.layout.fragment_list) {
     private lateinit var viewModel: ListViewModel
     private lateinit var binding: FragmentListBinding
     private val recyclerViewAdapter = RecyclerViewAdapter()
+    private lateinit var connectionLiveData: ConnectionLiveData
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        connectionLiveData = ConnectionLiveData(requireActivity())
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ListViewModel::class.java)
-
         binding = FragmentListBinding.bind(view)
 
+        setupRecyclerView()
         observeViewModel()
+        clickToNavigateToDetails()
+    }
 
+    private fun setupRecyclerView() {
         binding.itemRecyclerViewList.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = recyclerViewAdapter
@@ -36,19 +53,54 @@ class ListFragment : Fragment(R.layout.fragment_list) {
 
 
     private fun observeViewModel() {
-        viewModel.getBeautyProducts()
-        viewModel.beautyProducts.observe(viewLifecycleOwner) {
-            it?.let {
-                binding.itemRecyclerViewList.visibility = View.VISIBLE
-                recyclerViewAdapter.updateList(it)
+        connectionLiveData.observe(viewLifecycleOwner) { isNetworkAvailable ->
+
+            if (isNetworkAvailable == true) {
+                viewModel.getBeautyProducts()
+                viewModel.beautyProducts.observe(viewLifecycleOwner) {
+                    it?.let {
+                        binding.itemRecyclerViewList.visibility = View.VISIBLE
+                        recyclerViewAdapter.updateList(it)
+                    }
+                }
+            } else if (isNetworkAvailable == false) {
+                noInternetSnackBar()
+                Toast.makeText(requireContext(), "Network Unavailable", Toast.LENGTH_SHORT).show()
             }
-            recyclerViewAdapter.setOnItemClickListener {
-                val extras = FragmentNavigatorExtras(binding.itemRecyclerViewList to "image_big")
-                val action = ListFragmentDirections.actionFragmentListToDetailFragment(it)
-                findNavController().navigate(action,extras)
-                Toast.makeText(requireContext(), "You've clicked ${it.name}", Toast.LENGTH_SHORT).show()
-            }
+
         }
     }
 
+    private fun noInternetSnackBar() {
+        val snack: Snackbar =
+            Snackbar.make(requireView(), "No internet connection", Snackbar.LENGTH_LONG)
+        val view1 = snack.view
+        val params = view1.layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.TOP
+        view1.layoutParams = params
+        snack.setTextColor(Color.CYAN)
+        snack.setActionTextColor(Color.GREEN)
+        snack.setBackgroundTint(Color.BLACK)
+        snack.setAction("Connect", View.OnClickListener {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val panelIntent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
+                startActivityForResult(panelIntent, 0)
+            } else {
+                // use previous solution, add appropriate permissions to AndroidManifest file (see answers above)
+                (this.context?.applicationContext
+                    ?.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
+                    isWifiEnabled = true /*or false*/
+                }
+            }
+        })
+        snack.show()
+    }
+
+    private fun clickToNavigateToDetails() {
+        recyclerViewAdapter.setOnItemClickListener {
+            val action = ListFragmentDirections.actionFragmentListToDetailFragment(it)
+            findNavController().navigate(action)
+        }
+    }
 }

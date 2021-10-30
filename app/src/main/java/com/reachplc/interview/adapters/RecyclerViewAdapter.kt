@@ -17,7 +17,7 @@ import com.reachplc.interview.ui.list.ListFragmentDirections
 import com.reachplc.interview.utils.Util.getProgressDrawable
 import com.reachplc.interview.utils.Util.loadImage
 
-class RecyclerViewAdapter() :
+class RecyclerViewAdapter :
     RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
     private var productList = ArrayList<Product>()
@@ -27,8 +27,6 @@ class RecyclerViewAdapter() :
         productList.addAll(listOfProducts)
         notifyDataSetChanged()
     }
-
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -45,7 +43,7 @@ class RecyclerViewAdapter() :
         val products = productList[position]
         holder.bind(products)
 
-            holder.itemView.apply {
+        holder.itemView.apply {
 
             setOnClickListener {
                 onItemClickListener?.let {
@@ -60,7 +58,7 @@ class RecyclerViewAdapter() :
 
     inner class ViewHolder(binding: FragmentItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        private val productImage = binding.photoImage
+        private val productImage = binding.productImage
         private val productName = binding.productNameText
         private val progressDrawable = getProgressDrawable(itemView.context)
 
