@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 
 
 class ListViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
 
     private val repository = ProductsRepository.get()
 
@@ -22,8 +21,6 @@ class ListViewModel : ViewModel() {
 
         val response = repository.getBeautyItems()
         _beautyProducts.postValue(response)
-
     }
-
 
 }

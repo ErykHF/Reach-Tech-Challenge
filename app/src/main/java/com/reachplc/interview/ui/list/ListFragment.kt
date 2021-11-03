@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -29,20 +30,19 @@ class ListFragment : Fragment(R.layout.fragment_list) {
     private val recyclerViewAdapter = RecyclerViewAdapter()
     private lateinit var connectionLiveData: ConnectionLiveData
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        connectionLiveData = ConnectionLiveData(requireActivity())
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ListViewModel::class.java)
         binding = FragmentListBinding.bind(view)
+        setHasOptionsMenu(true)
+        connectionLiveData = ConnectionLiveData(requireActivity())
 
         setupRecyclerView()
         observeViewModel()
         clickToNavigateToDetails()
     }
+
 
     private fun setupRecyclerView() {
         binding.itemRecyclerViewList.apply {
@@ -57,43 +57,39 @@ class ListFragment : Fragment(R.layout.fragment_list) {
 
             if (isNetworkAvailable == true) {
                 viewModel.getBeautyProducts()
-                viewModel.beautyProducts.observe(viewLifecycleOwner) {
-                    it?.let {
-                        binding.itemRecyclerViewList.visibility = View.VISIBLE
-                        recyclerViewAdapter.updateList(it)
-                    }
-                }
+
             } else if (isNetworkAvailable == false) {
                 noInternetSnackBar()
-                Toast.makeText(requireContext(), "Network Unavailable", Toast.LENGTH_SHORT).show()
             }
 
+            viewModel.beautyProducts.observe(viewLifecycleOwner) {
+                it?.let {
+                    binding.itemRecyclerViewList.visibility = View.VISIBLE
+                    recyclerViewAdapter.updateList(it)
+                }
+            }
         }
     }
 
     private fun noInternetSnackBar() {
         val snack: Snackbar =
             Snackbar.make(requireView(), "No internet connection", Snackbar.LENGTH_LONG)
-        val view1 = snack.view
-        val params = view1.layoutParams as FrameLayout.LayoutParams
-        params.gravity = Gravity.TOP
-        view1.layoutParams = params
         snack.setTextColor(Color.CYAN)
         snack.setActionTextColor(Color.GREEN)
         snack.setBackgroundTint(Color.BLACK)
-        snack.setAction("Connect", View.OnClickListener {
+        snack.setAction("Connect"){
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val panelIntent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
                 startActivityForResult(panelIntent, 0)
             } else {
-                // use previous solution, add appropriate permissions to AndroidManifest file (see answers above)
+
                 (this.context?.applicationContext
                     ?.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
                     isWifiEnabled = true /*or false*/
                 }
             }
-        })
+        }
         snack.show()
     }
 

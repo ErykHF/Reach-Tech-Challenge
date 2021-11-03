@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -28,6 +29,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
 
         val progressDrawable = Util.getProgressDrawable(requireContext())
 
@@ -37,5 +39,9 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         binding.photoImage.loadImage(args.beautyArgs.image, progressDrawable)
         binding.descriptionTv.text = args.beautyArgs.description
         binding.priceTv.text = getString(R.string.price_string, args.beautyArgs.price.toString())
+
+        binding.toolbar.setNavigationOnClickListener { view ->
+            view.findNavController().navigateUp()
+        }
     }
 }

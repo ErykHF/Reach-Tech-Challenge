@@ -1,5 +1,6 @@
-package com.reachplc.interview.data.remote
+package com.reachplc.interview.api
 
+import com.reachplc.interview.data.remote.ProductsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 

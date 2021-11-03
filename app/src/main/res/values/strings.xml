@@ -1,8 +1,11 @@
 <resources>
-    <string name="app_name">BeautyProducts</string>
+    <string name="app_name">Beauty Products</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="price_string">£ %1$s</string>
+    <string name="price_string">£%1$s</string>
+
+    <string name="appbar_scrolling_view_behavior" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
+
 </resources>
