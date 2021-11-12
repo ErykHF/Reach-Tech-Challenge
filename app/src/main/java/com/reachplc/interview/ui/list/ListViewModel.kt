@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class ListViewModel : ViewModel() {
 
-    private val repository = ProductsRepository.get()
+    private val repository = ProductsRepository()
 
     private val _beautyProducts = MutableLiveData<List<Product>?>()
     val beautyProducts: LiveData<List<Product>?> = _beautyProducts

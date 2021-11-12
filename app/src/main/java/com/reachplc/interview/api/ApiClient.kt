@@ -1,7 +1,6 @@
 package com.reachplc.interview.api
 
 
-import com.reachplc.interview.data.remote.Product
 import com.reachplc.interview.data.remote.ProductsResponse
 import retrofit2.Response
 import java.lang.Exception

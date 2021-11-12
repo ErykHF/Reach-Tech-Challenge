@@ -11,7 +11,6 @@ class BeautyProductsApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        ProductsRepository.initialize(this)
 
     }
 }
