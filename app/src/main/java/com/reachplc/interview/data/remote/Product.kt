@@ -4,8 +4,8 @@ import java.io.Serializable
 
 data class Product(
     val id: String = "",
-    val name: String = "",
-    val image: String = "",
-    val description: String = "",
-    val price: Double = 0.0,
+    var name: String = "",
+    var image: String = "",
+    var description: String = "",
+    var price: Double = 0.0,
 ) : Serializable

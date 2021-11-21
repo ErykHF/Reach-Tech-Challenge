@@ -51,11 +51,13 @@ class RecyclerViewAdapter :
 
         private val productImage = binding.productImage
         private val productId = binding.productId
+        private val productPrice = binding.productPrice
         private val progressDrawable = getProgressDrawable(itemView.context)
 
         fun bind(beautyData: Product) {
             val photoUri = beautyData.image
             productId.text = beautyData.id
+            productPrice.text = beautyData.price.toString()
             productImage.loadImage(photoUri, progressDrawable)
         }
     }

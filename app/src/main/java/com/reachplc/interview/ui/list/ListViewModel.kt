@@ -1,16 +1,22 @@
 package com.reachplc.interview.ui.list
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.net.wifi.WifiManager
+import android.os.Build
+import android.provider.Settings
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.lifecycle.*
+import com.google.android.material.snackbar.Snackbar
 import com.reachplc.interview.data.remote.Product
 import com.reachplc.interview.data.remote.ProductsRepository
 import com.reachplc.interview.data.remote.ProductsResponse
 import kotlinx.coroutines.launch
 
 
-class ListViewModel : ViewModel() {
+class ListViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = ProductsRepository()
 
@@ -22,5 +28,4 @@ class ListViewModel : ViewModel() {
         val response = repository.getBeautyItems()
         _beautyProducts.postValue(response)
     }
-
 }
