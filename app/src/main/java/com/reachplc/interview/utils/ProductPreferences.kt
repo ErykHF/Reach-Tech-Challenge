@@ -7,7 +7,7 @@ private const val PREF_PRODUCT = "productPref"
 
 
 
-object ProductPreferences {
+class ProductPreferences {
 
     fun getStoredPrefs(context: Context): String {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
